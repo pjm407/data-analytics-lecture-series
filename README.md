@@ -24,4 +24,10 @@
 
 #### Part 4
 
+    - Statistics & Probability, Pt. 1
     - Data Visualization, Pt. 2
+    
+#### Part 5
+
+    - Statistics & Probability, Pt. 2
+    - Data Visualization, Pt. 3
