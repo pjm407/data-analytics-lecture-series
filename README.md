@@ -5,13 +5,23 @@
 #### Part 1
 
     - Introduction
-    - RStudio
+    - RStudio & RMarkdown
     - Packages
     - API Keys
-    - Data Wrangling
+    - Data Wrangling, Pt. 1
 
 #### Part 2
 
+    - Productivity Pipeline
+    - Data Sourcing, Pt. 1
+    - Data Wrangling, Pt. 2
+
 #### Part 3
 
+    - Data Sourcing, Pt. 2
+    - Data Wrangling, Pt. 3
+    - Data Visualization, Pt. 1
+
 #### Part 4
+
+    - Data Visualization, Pt. 2
