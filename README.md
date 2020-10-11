@@ -1,1 +1,3 @@
-# data-analytics-lecture-series
+# Data Analytics Lecture Series
+
+## Created October 2020
