@@ -8,18 +8,18 @@
     - RStudio & RMarkdown
     - Packages
     - API Keys
-    - Data Wrangling, Pt. 1
+    - Data Wrangling Concepts
 
 #### Part 2
 
-    - Setup
+    - Setting up RStudio & RMarkdown
     - Data Sourcing, Pt. 1
-    - Data Wrangling, Pt. 2
+    - Data Wrangling, Pt. 1
 
 #### Part 3
 
     - Data Sourcing, Pt. 2
-    - Data Wrangling, Pt. 3
+    - Data Wrangling, Pt. 2
     - Data Visualization, Pt. 1
 
 #### Part 4
