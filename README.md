@@ -13,12 +13,11 @@
 #### Part 2
 
     - Setting up RStudio & RMarkdown
-    - Data Sourcing, Pt. 1
+    - Data Sourcing - FRED & Census
     - Data Wrangling, Pt. 1
 
 #### Part 3
 
-    - Data Sourcing, Pt. 2
     - Data Wrangling, Pt. 2
     - Data Visualization, Pt. 1
 
