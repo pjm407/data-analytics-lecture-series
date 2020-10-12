@@ -12,7 +12,7 @@
 
 #### Part 2
 
-    - Productivity Pipeline
+    - Setup
     - Data Sourcing, Pt. 1
     - Data Wrangling, Pt. 2
 
