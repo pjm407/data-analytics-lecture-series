@@ -7,7 +7,7 @@
     - Introduction
     - Research Guidelines & Indicators
     - RStudio & RMarkdown
-    - Terms & Concepts
+    - Data Wrangling Terms & Concepts
 
 #### Part 2
 
