@@ -5,6 +5,7 @@
 #### Part 1
 
     - Introduction
+    - Research concepts, guidelines, and indicators
     - RStudio & RMarkdown
     - Packages
     - API Keys
