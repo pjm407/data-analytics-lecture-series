@@ -18,11 +18,11 @@
 #### Part 3
 
     - Data Wrangling, Pt. 2
-    - Statistics, Pt. 1
+    - Statistics & Calculations, Pt. 1
     - Data Visualization, Pt. 1
 
 #### Part 4
 
-    - Statistics, Pt. 2
+    - Statistics & Calculations, Pt. 2
     - Data Visualization, Pt. 2
     
