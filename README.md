@@ -4,9 +4,8 @@
 
 #### Part 1
 
-    - Introduction
+    - Introduction to Data Analytics & RStudio
     - Research Guidelines & Indicators
-    - RStudio & RMarkdown
     - Data Wrangling Terms & Concepts
 
 #### Part 2
