@@ -13,7 +13,4 @@
     - Setting up RStudio & RMarkdown
     - Data Sourcing
     - Data Wrangling
-
-#### Part 3
-
     - Data Visualization
