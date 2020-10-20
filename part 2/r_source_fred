@@ -1,0 +1,145 @@
+```{r}
+library(fredr)
+library(tidyverse
+```
+
+**FRED API KEY**
+
+```{r}
+fredr_set_key('YOUR API KEY HERE')
+```
+
+**HOME PRICE INDEX - BOSTON**
+
+```{r}
+# S&P/Case-Shiller MA-Boston Home Price Index
+# Earliest start date: January 1987
+price_index_boston <- fredr('BOXRSA', frequency = "m", observation_start = as.Date("1987-01-01"))
+
+# Save 'price_index_boston' to folder
+# setwd("~/Desktop/REDA_Folder")
+write.csv(price_index_boston, "price_index_boston.csv")
+
+head(price_index_boston)
+```
+
+**HOME PRICE INDEX - NATIONAL**
+
+```{r}
+# S&P/Case-Shiller U.S. National Home Price Index
+# Earliest start date: January 1987
+price_index_national <- fredr('CSUSHPINSA', frequency = "m", observation_start = as.Date("1987-01-01"))
+
+# Save 'price_index_national' to folder
+# setwd("~/Desktop/REDA_Folder")
+write.csv(price_index_national, "price_index_national.csv")
+
+head(price_index_national)
+```
+
+**HOME PRICE INDEX - BOSTON - DATES**
+
+```{r}
+# Create 'month' variable with 'date' variable
+price_index_boston$month <- month(price_index_boston$date)
+
+# Create 'year' variable with 'date' variable
+price_index_boston$year <- year(price_index_boston$date)
+
+# Check range of 'date' variable
+range(price_index_boston$date)
+```
+
+**HOME PRICE INDEX - NATIONAL - DATES**
+
+```{r}
+# Create 'month' variable with 'date' variable
+price_index_national$month <- month(price_index_national$date)
+
+# Create 'year' variable with 'date' variable
+price_index_national$year <- year(price_index_national$date)
+
+# Check range of 'date' variable
+range(price_index_national$date)
+```
+
+**HOME PRICE INDEX - JOIN DATAFRAMES**
+
+```{r}
+# Both dataframes have exact same variables, so we 
+# use 'rbind' which stacks the dataframes on top of each other
+price_index_merged <- rbind(price_index_boston, price_index_national)
+dim(price_index_merged)
+```
+
+**HOME PRICE INDEX - GEOGRAPHY VARIABLE**
+
+```{r}
+# Create new variable specificing the geography for each geography
+price_index_merged <- price_index_merged %>%
+  mutate(metro = case_when(series_id == "BOXRSA" ~ "Boston",
+                           series_id == "CSUSHPINSA" ~ "National")) %>%
+  arrange(date)
+head(price_index_merged)
+```
+
+**HOME PRICE INDEX - BEFORE/DURING BINARY VARIABLE**
+
+```{r}
+# Create variable denoting time before and during pandemic
+# 1 represents during pandemic
+# 0 represents before
+price_index_merged <- price_index_merged %>%
+  mutate(during_pandemic = case_when(date >= "2020-02-01" ~ 1,
+                                     date < "2020-02-01" ~ 0))
+head(price_index_merged)
+```
+
+**HOME PRICE INDEX - COUNT DATAFRAME**
+
+```{r}
+# Create 'count' dataframe
+price_index_count <- price_index_merged %>%
+  count(during_pandemic, metro) %>%
+  rename(count = n) %>%
+  mutate(total = sum(count),
+         share = (count/total)*100)
+head(price_index_count)
+```
+
+**HOME PRICE INDEX - FILTER**
+
+```{r}
+# Filter dataframe to observations between January 2013 and present
+price_index_filter <- price_index_merged %>%
+  filter(date >= "2013-01-01")
+head(price_index_filter)
+```
+
+**HOME PRICE INDEX - COUNT DATAFRAME, PART 2**
+
+```{r}
+# Create 'count' dataframe
+price_index_count <- price_index_filter %>%
+  count(during_pandemic, metro) %>%
+  rename(count = n) %>%
+  mutate(total = sum(count),
+         share = (count/total)*100)
+head(price_index_count)
+```
+
+**HOME PRICE INDEX - SUMMARY**
+
+```{r}
+# Create 'summary' dataframe
+# includes mean, median, standard deviation, and coefficient of variation 
+price_index_summary <- price_index_filter %>%
+  group_by(during_pandemic, metro) %>%
+  summarise(mean_value = mean(value),
+            median_value = median(value),
+            sd_value = sd(value),
+            cv_value = (sd_value/mean_value)*100)
+head(price_index_summary)
+```
+
+
