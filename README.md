@@ -13,6 +13,6 @@
 #### Part 2 - Applied Data Analytics
 
     - Setting up RStudio & RMarkdown
-    - Data Sourcing
-    - Data Wrangling
-    - Data Visualization
+    - Data Sourcing (via fredr and tidycensus)
+    - Data Wrangling (via dplyr)
+    - Data Visualization (via ggplot)
