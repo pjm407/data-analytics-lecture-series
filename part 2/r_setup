@@ -1,0 +1,39 @@
+---
+title: "REDA"
+author: "Mattingly"
+date: "10/11/2020"
+output: pdf_document
+---
+
+### creating a notebook chunk
+# on a mac: 'control' + 'option', then 'i'
+# on a pc: 'control' + 'alt', then 'i'
+
+```{r}
+install.packages(c("tidyverse", "devtools", "tidycensus"))
+```
+
+```{r}
+library(tidyverse)
+library(devtools)
+library(tidycensus)
+```
+
+```{r}
+devtools::install_github("sboysel/fredr")
+library(fredr)
+```
+
+**FRED API KEY**
+
+```{r}
+# link to request key: research.stlouisfed.org/useraccount/login/secure/
+fredr_set_key('YOUR API KEY HERE')
+```
+
+**CENSUS API KEY**
+
+```{r}
+# link to request key: api.census.gov/data/key_signup.html
+census_api_key('YOUR API KEY HERE')
+```
