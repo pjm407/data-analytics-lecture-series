@@ -2,6 +2,8 @@
 
 ## Created October 2020
 
+### Tutorials on sourcing, wrangling, and visualizaing cities real estate data using RStudio
+
 #### Part 1
 
     - Introduction to Data Analytics & RStudio
