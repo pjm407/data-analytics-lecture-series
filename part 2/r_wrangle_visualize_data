@@ -1,0 +1,183 @@
+
+
+**POPULATION ESTIMATES & HOME PRICE INDEX - JOIN DATAFRAMES**
+
+```{r}
+# Utilize "left_join" function since dataframes share only a few variables
+boston_merged <- left_join(acs_clean, price_index_filter)
+
+# Save merged dataframe
+write.csv(boston_merged, "boston_merged.csv")
+head(boston_merged)
+```
+
+
+**HOME PRICE INDEX - TREND GRAPH**
+
+```{r}
+# Create a point/line graph named 'price_index_graph'
+price_index_graph <- price_index_merged %>%
+  # Within 'aesthetics', assign variables to y- and x-axes and color
+  ggplot(aes(y = value, x = date, color = metro)) +
+  
+  geom_line(size = 1) +
+  geom_point(size = .75) +
+  # Manually define color scale for 'metro'
+  scale_color_manual(name = "Geography",
+                     labels = c("Boston","National"),
+                     values = c("#90daff","#b55141")) + 
+  
+  # Adjust y-axis range
+  scale_y_continuous(limits = c(0, 240)) +
+  # Label graph
+  labs(title = "Home Price Index, U.S. National and Boston Metro Area",
+       y = "",
+       x = "",
+       caption = "Source: S&P Dow Jones Indices LLC (1987-2020)") +
+  # Select pre-installed theme
+  theme_light() +
+  # Locate 'metro' color legend on graph
+  theme(legend.position = c(0.25, 0.8), legend.background = element_blank())
+# Save graph
+ggsave("price_index_graph.png", price_index_graph, width = 7, height = 5, device = "png")
+price_index_graph
+```
+
+
+**HOME PRICE INDEX - TREND GRAPH**
+
+```{r}
+# Create a point/line graph named 'price_index_filter_graph' with filtered dataframe
+price_index_filter_graph <- price_index_filter %>%
+    # Within 'aesthetics', assign variables to y- and x-axes and color
+    ggplot(aes(y = value, x = date, color = metro)) +
+    # Create grayed-out box indicating pandemic recession
+    annotate(geom = "rect", xmin = as.Date("2020-02-01"), xmax = as.Date("2020-09-01"), 
+           ymin = -Inf, ymax = Inf, 
+           fill = "#f0f0f0", alpha = 0.95) +  
+  
+  geom_line(size = 1) +
+  geom_point(size = .75) +
+  # Manually define color scale for 'metro'
+  scale_color_manual(name = "Geography",
+                     labels = c("Boston","National"),
+                     values = c("#90daff","#b55141")) + 
+  # Adjust y-axis range
+  scale_y_continuous(limits = c(0, 240)) +
+  # Label graph
+  labs(title = "Home Price Index, U.S. National and Boston Metro Area",
+       y = "",
+       x = "",
+       caption = "Source: S&P Dow Jones Indices LLC (2013-2020)") +
+  # Select pre-installed theme
+  theme_light() +
+  # Locate 'metro' color legend on graph
+  theme(legend.position = c(0.25, 0.25), legend.background = element_blank())
+# Save graph
+ggsave("price_index_filter_graph.png", price_index_filter_graph, width = 7, height = 5, device = "png")
+price_index_filter_graph
+```
+
+**POPULATION ESTIMATES - GROUPED BARPLOT**
+
+```{r}
+# Create a function that creates a label for percent values 
+percent <- function(x, digits = 2, format = "f", ...) {
+  paste0(formatC(100 * x, format = format, digits = digits, ...), "%")
+}
+```
+
+**POPULATION ESTIMATES - GROUPED BARPLOT**
+
+```{r}
+# Establish the order of levels in the 'metro' variable
+boston_merged$metro <- factor(boston_merged$metro, levels = c("Boston", "National"))
+
+# Round up 'unemployment rate' variable to two decimal places
+boston_merged$unemp_pct <- round(boston_merged$unemp_rate, digits = 2)
+
+# Apply function to 'unemployment rate' variable to create percentage label
+boston_merged$unemp_label <- percent(boston_merged$unemp_rate, 1)
+```
+
+**POPULATION ESTIMATES - GROUPED BARPLOT**
+
+```{r}
+# Create a grouped barplot named 'pop_emp_graph' with filtered dataframe
+pop_emp_graph <- boston_merged %>%
+  # Within 'aesthetics', assign variables to y- and x-axes and fill with factor levels 
+  ggplot(aes(y = unemp_pct, x = year, fill = factor(metro, levels = levels(metro)))) +
+  # Specify the position of each bar to be grouped along x-axis
+  geom_bar(stat = "identity", position = "dodge2") +
+  # Add percentage label to top of 
+  geom_label(aes(label = unemp_label, group = metro), 
+             fill = "white", size = 3, fontface = "bold", position = position_dodge2(width = .9)) +
+  # Manually define fill scale for 'metro'
+  scale_fill_manual(name = "Geography",
+                     labels = c("Boston","National"),
+                     values = c("#90daff","#b55141")) + 
+  # Format y-axis as percentage
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  # Define x-axis breaks
+  scale_x_continuous(breaks=c(2013, 2014, 2015, 2016, 2017, 2018)) +
+  # Label graph
+  labs(title = "Unemployment Rate, U.S. National and Boston Metro Area",
+       y = "",
+       x = "",
+       caption = "Source: Census (2013-2018)") +
+  # Select pre-installed theme
+  theme_light()
+# Save graph
+ggsave("pop_emp_graph.png", pop_emp_graph, width = 7, height = 5, device = "png")
+pop_emp_graph
+```
+
+**POPULATION ESTIMATES - EMPLOYMENT AND INCOME TRENDS**
+
+```{r}
+# Create a function that creates a label for dollar values 
+dollar <- function(x, digits = 2, format = "f", ...) {
+  paste0("$", formatC(x/1000, format = format, digits = digits, ...), "k")
+}
+```
+
+```{r}
+# Establish the order of levels in the 'metro' variable
+boston_merged$metro <- factor(boston_merged$metro, levels = c("Boston", "National"))
+
+# Round up 'unemployment rate' variable to two decimal places
+boston_merged$unemp_pct <- round(boston_merged$unemp_rate, digits = 2)
+
+# Apply function to 'unemployment rate' variable to create percentage label
+boston_merged$inc_dollar <- dollar(boston_merged$median_income, 1)
+```
+
+```{r}
+# Create a grouped barplot named 'pop_emp_graph' with filtered dataframe
+emp_inc_graph <- boston_merged %>%
+  # Within 'aesthetics', assign variables to y- and x-axes and fill with factor levels 
+  ggplot(aes(y = median_income, x = year, fill = factor(metro, levels = levels(metro)))) +
+  # Specify the position of each bar to be grouped along x-axis
+  geom_bar(stat = "identity", position = "dodge2") +
+  # Add dollar label to top of 
+  geom_label(aes(label = inc_dollar, group = metro), 
+             fill = "white", size = 3, fontface = "bold", position = position_dodge2(width = .9)) +
+  # Manually define fill scale for 'metro'
+  scale_fill_manual(name = "Geography",
+                     labels = c("Boston","National"),
+                     values = c("#90daff","#b55141")) +
+  # Format y-axis as dollar value
+  scale_y_continuous(labels = scales::dollar_format(accuracy = 1)) +
+  # Define x-axis breaks
+  scale_x_continuous(breaks=c(2013, 2014, 2015, 2016, 2017, 2018)) +
+  # Label graph
+  labs(title = "Median Income, U.S. National and Boston Metro Area",
+       y = "",
+       x = "",
+       caption = "Source: Census (2013-2018)") +
+  # Select pre-installed theme
+  theme_light()
+# Save graph
+ggsave("emp_inc_graph.png", emp_inc_graph, width = 7, height = 5, device = "png")
+emp_inc_graph
+```
