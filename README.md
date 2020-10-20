@@ -11,14 +11,9 @@
 #### Part 2
 
     - Setting up RStudio & RMarkdown
-    - Data Sourcing , Pt. 1
-    - Data Wrangling, Pt. 1
+    - Data Sourcing
+    - Data Wrangling
 
 #### Part 3
-
-    - Data Sourcing , Pt. 2
-    - Data Wrangling, Pt. 2
-    
-#### Part 4
 
     - Data Visualization
