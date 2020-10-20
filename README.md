@@ -1,8 +1,8 @@
 # Data Analytics Lecture Series
 
-## Created October 2020
+## Source, wrangle, and visualize cities real estate data in R
 
-### Tutorials on sourcing, wrangling, and visualizaing cities real estate data using RStudio
+### Created October 2020
 
 #### Part 1
 
