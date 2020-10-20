@@ -1,0 +1,154 @@
+
+```{r}
+library(tidyverse)
+library(tidycensus)
+```
+
+**CENSUS API KEY**
+
+```{r}
+census_api_key('YOUR API KEY HERE')
+```
+
+**POPULATION ESTIMATES - ACS VARIABLES**
+
+```{r}
+# Load variable list and descriptions for acs 1-year sample data
+acs_vars <- load_variables(2018, "acs1", cache = TRUE)
+head(acs_vars)
+```
+
+**POPULATION ESTIMATES - SET-UP**
+
+```{r}
+# Create list named 'acs_years' with all years
+acs_years <- lst(2013, 2014, 2015, 2016, 2017, 2018)
+
+# Create character list of all acs variable names with new labels
+acs_vars <- c(
+  total_pop = "B01003_001",
+  white_pop = "B03002_003",
+  black_pop = "B03002_004",
+  asian_pop = "B03002_006",
+  latino_pop = "B03002_012",
+  median_income = "B19013_001",
+  labor_total = "B23025_002",
+  labor_employed = "B23025_004",
+  labor_umemployed = "B23025_005")
+```
+
+**POPULATION ESTIMATES - RETRIEVE BOSTON METRO AREA DATA**
+
+```{r}
+# Create dataframe named 'acs_boston'
+# Use map_dfr function to add all rows together
+acs_boston <- map_dfr(
+  # Provide list of years    
+  acs_years,
+  # Use get_acs function to retreive samples
+  ~ get_acs(
+      # Definite geography as metro areas
+      geography = "metropolitan statistical area/micropolitan statistical area",
+      # Provide list of variables
+      variables = acs_vars,
+      year = .x,
+      # Define sample as 1-year sample ('acs1'), as opposed to 5-year sample ('acs5')
+      survey = "acs1"
+      ),
+  # Create 'id' variable based on 'year' 
+  .id = "year") %>%
+  # Remove unnecessary variables
+  select(-moe, -GEOID) %>% 
+  # Rename variable 'metro'
+  rename(metro = NAME) %>%
+  arrange(year) %>% 
+  # Recode Boston metro area label
+  mutate(metro = case_when(metro == "Boston-Cambridge-Newton, MA-NH Metro Area" ~ "Boston")) %>%
+  # Filter only for Boston metro area observations
+  filter(metro == "Boston")
+head(acs_boston)
+```
+
+**POPULATION ESTIMATES - RETRIEVE NATIONAL DATA**
+
+```{r}
+# Create dataframe named 'acs_usa'
+# Use map_dfr function to loop over the list of years and then combine all rows into single dataframe
+acs_usa <- map_dfr(
+  # Provide list of years  
+  acs_years,
+  # Use get_acs function to retreive samples
+  ~ get_acs(
+      # Definite geography as entire nation
+      geography = "us",
+      # Provide list of variables
+      variables = acs_vars,
+      year = .x,
+      # Define sample as 1-year sample ('acs1'), as opposed to 5-year sample ('acs5')
+      survey = "acs1"
+      ),
+  # Create 'id' variable based on 'year' 
+  .id = "year") %>%
+  # Remove unnecessary variables
+  select(-moe, -GEOID) %>% 
+  # Rename variable 'metro'
+  rename(metro = NAME) %>%
+  arrange(year) %>% 
+  # Recode national label
+  mutate(metro = case_when(metro == "United States" ~ "National"))
+head(acs_usa)
+```
+
+**POPULATION ESTIMATES - JOIN DATAFRAMES**
+
+```{r}
+# Both dataframes have exact same variables, so we 
+# use 'rbind' which stacks the dataframes on top of each other
+acs_merged <- rbind(acs_boston, acs_usa)
+dim(acs_merged)
+```
+
+**POPULATION ESTIMATES - DATES**
+
+```{r}
+# Convert 'date' variable to date format
+acs_merged$date <- lubridate::ymd(acs_merged$year, truncated = 2L)
+
+# Create 'month' variable with 'date' variable
+acs_merged$month <- month(acs_merged$date)
+
+# Create 'year' variable with 'date' variable
+acs_merged$year <- year(acs_merged$date)
+
+# Check range of 'date' variable
+head(acs_merged)
+```
+
+**POPULATION ESTIMATES - RESHAPE**
+
+```{r}
+# Spread data by year - convert values in 'variable' column into individual columns
+# Each row now represents one specific year for either 'boston' or 'national' observations
+acs_wide <- acs_merged %>%
+  spread(variable, estimate) %>%
+  relocate(year, month, date, metro, asian_pop, black_pop, latino_pop, white_pop, total_pop,
+           labor_employed, labor_umemployed, labor_total, median_income)
+head(acs_wide)
+```
+
+**POPULATION ESTIMATES - VARIABLES**
+
+```{r}
+acs_clean <- acs_wide %>%
+# Calculate percentage share of variables based on 'total population' or 'total labor force' variable
+  mutate(asian_share = (asian_pop/total_pop),
+         black_share = (black_pop/total_pop),
+         latino_share = (latino_pop/total_pop),
+         white_share = (white_pop/total_pop),
+         emp_rate = (labor_employed/labor_total),
+         unemp_rate = (labor_umemployed/labor_total)) %>%
+# Select only necessary variables to reduce wideness
+  dplyr::select(year, month, date, metro, total_pop, asian_share, black_share, latino_share,  
+                white_share, emp_rate, unemp_rate, median_income)
+head(acs_clean)
+```
